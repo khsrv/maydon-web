@@ -47,13 +47,21 @@ android {
         create("release") {
             val storeFileValue = keystoreProperties["storeFile"] as String?
             if (storeFileValue != null) {
-                val keystoreFile = file(storeFileValue)
+                // Путь к keystore относительно android/ директории
+                val keystoreFile = rootProject.file(storeFileValue)
+                println("Keystore path: ${keystoreFile.absolutePath}")
+                println("Keystore exists: ${keystoreFile.exists()}")
                 if (keystoreFile.exists()) {
                     keyAlias = keystoreProperties["keyAlias"] as String?
                     keyPassword = keystoreProperties["keyPassword"] as String?
                     storeFile = keystoreFile
                     storePassword = keystoreProperties["storePassword"] as String?
+                    println("Signing config configured successfully")
+                } else {
+                    println("ERROR: Keystore file not found at ${keystoreFile.absolutePath}")
                 }
+            } else {
+                println("ERROR: storeFile not found in key.properties")
             }
         }
     }
@@ -63,6 +71,9 @@ android {
             val releaseSigning = signingConfigs.findByName("release")
             if (releaseSigning?.storeFile != null && releaseSigning.storeFile!!.exists()) {
                 signingConfig = releaseSigning
+                println("Release build type: Using signing config")
+            } else {
+                println("WARNING: Release build type: No signing config available")
             }
         }
     }

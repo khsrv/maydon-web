@@ -1,4 +1,8 @@
 // path: lib/src/core/telegram/telegram_web_app_service.dart
+// ignore_for_file: avoid_web_libraries_in_flutter, uri_does_not_exist
+// Этот файл используется только на веб-платформе через условные импорты
+// Анализатор может показывать ошибки, но они не влияют на компиляцию для веб
+
 import 'dart:async';
 import 'dart:html' as html;
 import 'dart:js' as js;

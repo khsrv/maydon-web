@@ -89,7 +89,6 @@ flutter:
   assets:
     - assets/images/
     - assets/images/logo/
-    - assets/icons/
   fonts:
     - family: Gilroy
       fonts:

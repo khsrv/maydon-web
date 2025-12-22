@@ -1,0 +1,13 @@
+
+analyzer:
+  errors:
+    unrelated_type_equality_checks: ignore
+    deprecated_member_use: ignore
+    uri_does_not_exist: ignore
+  exclude:
+    - lib/src/core/telegram/telegram_web_app_service.dart
+include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    always_use_package_imports: false

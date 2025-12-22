@@ -149,8 +149,8 @@ GoRouter createRouter(
     // 🔥 redirect ДОЛЖЕН быть на корневом GoRouter, а не на ShellRoute
     redirect: (context, state) {
       const splash = '/splash';
-      // const onboarding = '/onboarding';
-      const onboarding = '/';
+      const onboarding = '/onboarding';
+      // const onboarding = '/';
       const home = '/';
       const forceUpdate = '/force-update';
 
