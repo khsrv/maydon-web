@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:postj/src/theme/app_theme.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
+
+// Для веб-платформы используем iframe
+import 'dart:html' as html if (dart.library.html) 'dart:html';
+import 'dart:ui_web' as ui_web;
 
 class ScorersPage extends StatefulWidget {
   const ScorersPage({super.key});
@@ -11,48 +16,78 @@ class ScorersPage extends StatefulWidget {
 }
 
 class _ScorersPageState extends State<ScorersPage> {
-  late final WebViewController _controller;
+  WebViewController? _controller;
   bool _isLoading = true;
+  String? _iframeViewId;
+  final String _url = 'https://maydon.join.football/tournament/1060010/stats';
 
   @override
   void initState() {
     super.initState();
-    const hideScript = '''
-      (function(){
-        var h = document.querySelector('header');
-        if (h) h.style.display = 'none';
-        var f = document.querySelector('footer');
-        if (f) f.style.display = 'none';
-      })();
-    ''';
-
-    _controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(kWebViewBgLight)
-      ..setNavigationDelegate(
-        NavigationDelegate(
-          onPageStarted: (_) {
-            if (mounted) {
-              setState(() => _isLoading = true);
-            }
-          },
-          onPageFinished: (_) {
-            _controller.runJavaScript(hideScript).catchError((_) {});
-            if (mounted) {
-              setState(() => _isLoading = false);
-            }
-          },
-        ),
-      );
-
-    final platform = _controller.platform;
-    if (platform is WebKitWebViewController) {
-      platform.setAllowsBackForwardNavigationGestures(true);
+    
+    // Для веб-платформы используем iframe
+    if (kIsWeb) {
+      _iframeViewId = 'scorers-${DateTime.now().millisecondsSinceEpoch}';
+      _setupWebView();
+    } else {
+      _setupMobileView();
     }
+  }
+  
+  void _setupWebView() {
+    if (kIsWeb) {
+      // ignore: undefined_prefixed_name
+      ui_web.platformViewRegistry.registerViewFactory(
+        _iframeViewId!,
+        (int viewId) {
+          // ignore: undefined_prefixed_name
+          final iframe = html.IFrameElement()
+            ..src = _url
+            ..style.border = 'none'
+            ..style.width = '100%'
+            ..style.height = '100%';
+          return iframe;
+        },
+      );
+      setState(() => _isLoading = false);
+    }
+  }
+  
+  void _setupMobileView() {
+      const hideScript = '''
+        (function(){
+          var h = document.querySelector('header');
+          if (h) h.style.display = 'none';
+          var f = document.querySelector('footer');
+          if (f) f.style.display = 'none';
+        })();
+      ''';
 
-    _controller.loadRequest(
-      Uri.parse('https://maydon.join.football/tournament/1060010/stats'),
-    );
+      _controller = WebViewController()
+        ..setJavaScriptMode(JavaScriptMode.unrestricted)
+        ..setBackgroundColor(kWebViewBgLight)
+        ..setNavigationDelegate(
+          NavigationDelegate(
+            onPageStarted: (_) {
+              if (mounted) {
+                setState(() => _isLoading = true);
+              }
+            },
+            onPageFinished: (_) {
+              _controller!.runJavaScript(hideScript).catchError((_) {});
+              if (mounted) {
+                setState(() => _isLoading = false);
+              }
+            },
+          ),
+        );
+
+      final platform = _controller!.platform;
+      if (platform is WebKitWebViewController) {
+        platform.setAllowsBackForwardNavigationGestures(true);
+      }
+
+      _controller!.loadRequest(Uri.parse(_url));
   }
 
   @override
@@ -61,7 +96,11 @@ class _ScorersPageState extends State<ScorersPage> {
       backgroundColor: kWebViewBgLight,
       body: _isLoading
           ? const Center(child: CircularProgressIndicator(color: kBlue))
-          : WebViewWidget(controller: _controller),
+          : kIsWeb
+              ? HtmlElementView(viewType: _iframeViewId!)
+              : _controller != null
+                  ? WebViewWidget(controller: _controller!)
+                  : const Center(child: Text('Ошибка загрузки')),
     );
   }
 }
