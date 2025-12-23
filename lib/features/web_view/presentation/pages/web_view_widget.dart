@@ -193,12 +193,14 @@ class _WebViewPageState extends State<WebViewPage> {
         body: Stack(
           fit: StackFit.expand,
           children: [
-            // Основной слой с WebView / iframe
+            // Основной слой с WebView / iframe (внизу стека)
             if (kIsWeb)
               // Для веб используем iframe
               _isLoading
                   ? const Center(child: CupertinoActivityIndicator(color: kBlue))
-                  : HtmlElementView(viewType: _iframeViewId!)
+                  : Positioned.fill(
+                      child: HtmlElementView(viewType: _iframeViewId!),
+                    )
             else
               // Для мобильных используем WebView
               _isLoading
@@ -209,8 +211,10 @@ class _WebViewPageState extends State<WebViewPage> {
                           child: Text('Ошибка загрузки WebView'),
                         ),
             // Верхний AppBar всегда поверх контента
-            Align(
-              alignment: Alignment.topCenter,
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
               child: OverlayAppBar(
                 title: Text(widget.title ?? 'Maydon'),
                 leading: IconButton(
@@ -227,13 +231,18 @@ class _WebViewPageState extends State<WebViewPage> {
                 ],
               ),
             ),
-            // Нижний оверлей для скрытия footer сайта (только веб)
+            // Нижний оверлей для скрытия footer сайта (только веб) - поверх всего
             if (kIsWeb)
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  height: 50,
-                  color: kWebViewBgLight,
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: IgnorePointer(
+                  ignoring: false,
+                  child: Container(
+                    height: 50,
+                    color: kWebViewBgLight,
+                  ),
                 ),
               ),
           ],

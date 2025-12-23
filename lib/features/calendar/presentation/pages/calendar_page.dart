@@ -124,13 +124,35 @@ class _CalendarPageState extends State<CalendarPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kWebViewBgLight,
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: kBlue))
-          : kIsWeb
-              ? HtmlElementView(viewType: _iframeViewId!)
-              : _controller != null
-                  ? WebViewWidget(controller: _controller!)
-                  : const Center(child: Text('Ошибка загрузки')),
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          // Основной слой с WebView / iframe
+          _isLoading
+              ? const Center(child: CircularProgressIndicator(color: kBlue))
+              : kIsWeb
+                  ? Positioned.fill(
+                      child: HtmlElementView(viewType: _iframeViewId!),
+                    )
+                  : _controller != null
+                      ? WebViewWidget(controller: _controller!)
+                      : const Center(child: Text('Ошибка загрузки')),
+          // Нижний оверлей для скрытия footer сайта (только веб) - поверх всего
+          if (kIsWeb)
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: IgnorePointer(
+                ignoring: false,
+                child: Container(
+                  height: 50,
+                  color: kWebViewBgLight,
+                ),
+              ),
+            ),
+        ],
+      ),
     );
   }
 }
