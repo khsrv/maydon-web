@@ -103,21 +103,25 @@
   <script id="splash-screen-script">
     function removeSplashFromWeb() {
       document.getElementById("splash")?.remove();
-      document.getElementById("splash-branding")?.remove();
       document.body.style.background = "transparent";
     }
   </script>
 </head>
 <body>
-  <picture id="splash">
-      <source srcset="splash/img/light-1x.png 1x, splash/img/light-2x.png 2x, splash/img/light-3x.png 3x, splash/img/light-4x.png 4x" media="(prefers-color-scheme: light)">
-      <source srcset="splash/img/dark-1x.png 1x, splash/img/dark-2x.png 2x, splash/img/dark-3x.png 3x, splash/img/dark-4x.png 4x" media="(prefers-color-scheme: dark)">
-      <img class="center" aria-hidden="true" src="splash/img/light-1x.png" alt="">
-  </picture>
-  
-  
-  
-  
+  <div id="splash" style="
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #FFFFFF;
+  ">
+    <div style="text-align: center; font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif; color: #222;">
+      <div style="font-size: 28px; font-weight: 600; margin-bottom: 8px;">Maydon</div>
+      <div style="font-size: 16px; opacity: 0.7;">Загрузка...</div>
+    </div>
+  </div>
+
   <script src="flutter_bootstrap.js" async=""></script>
 
 
