@@ -44,7 +44,7 @@ class _ScorersPageState extends State<ScorersPage> {
           // ignore: undefined_prefixed_name
           final container = html.DivElement()
             ..style.width = '100%'
-            ..style.height = '100%'
+            ..style.height = 'calc(100% - 150px)' // Уменьшаем высоту на размер footer
             ..style.overflow = 'hidden'
             ..style.position = 'relative';
           
@@ -53,11 +53,7 @@ class _ScorersPageState extends State<ScorersPage> {
             ..src = _url
             ..style.border = 'none'
             ..style.width = '100%'
-            ..style.height = 'calc(100% + 100px)' // Увеличиваем высоту, чтобы обрезать footer
-            ..style.position = 'absolute'
-            ..style.top = '0'
-            ..style.left = '0'
-            ..style.transform = 'translateY(-100px)'; // Сдвигаем вверх, чтобы скрыть footer
+            ..style.height = '100%';
           
           container.append(iframe);
           
