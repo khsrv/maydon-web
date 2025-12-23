@@ -66,6 +66,38 @@ class _WebViewPageState extends State<WebViewPage> {
             ..style.border = 'none'
             ..style.width = '100%'
             ..style.height = '100%';
+          
+          // Пытаемся скрыть footer после загрузки iframe
+          iframe.onLoad.listen((_) {
+            try {
+              // ignore: undefined_prefixed_name
+              final iframeDoc = iframe.contentDocument ?? iframe.contentWindow?.document;
+              if (iframeDoc != null) {
+                // Скрываем header и footer
+                final header = iframeDoc.querySelector('header');
+                if (header != null && !header.querySelector('.timetable')) {
+                  // ignore: undefined_prefixed_name
+                  (header as html.Element).style.display = 'none';
+                }
+                final footer = iframeDoc.querySelector('footer');
+                if (footer != null && !footer.querySelector('.timetable')) {
+                  // ignore: undefined_prefixed_name
+                  (footer as html.Element).style.display = 'none';
+                }
+                
+                // Добавляем padding-top для body
+                final body = iframeDoc.querySelector('body');
+                if (body != null) {
+                  // ignore: undefined_prefixed_name
+                  (body as html.Element).style.paddingTop = '110px';
+                }
+              }
+            } catch (e) {
+              // CORS может блокировать доступ к содержимому iframe
+              // В этом случае используем CSS для скрытия через стили родительского элемента
+            }
+          });
+          
           return iframe;
         },
       );

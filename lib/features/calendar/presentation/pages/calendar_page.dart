@@ -46,6 +46,31 @@ class _CalendarPageState extends State<CalendarPage> {
             ..style.border = 'none'
             ..style.width = '100%'
             ..style.height = '100%';
+          
+          // Пытаемся скрыть footer после загрузки iframe
+          iframe.onLoad.listen((_) {
+            try {
+              // ignore: undefined_prefixed_name
+              final iframeDoc = iframe.contentDocument ?? iframe.contentWindow?.document;
+              if (iframeDoc != null) {
+                // Скрываем header и footer
+                final header = iframeDoc.querySelector('header');
+                if (header != null) {
+                  // ignore: undefined_prefixed_name
+                  (header as html.Element).style.display = 'none';
+                }
+                final footer = iframeDoc.querySelector('footer');
+                if (footer != null) {
+                  // ignore: undefined_prefixed_name
+                  (footer as html.Element).style.display = 'none';
+                }
+              }
+            } catch (e) {
+              // CORS может блокировать доступ к содержимому iframe
+              // В этом случае используем CSS для скрытия через стили родительского элемента
+            }
+          });
+          
           return iframe;
         },
       );
