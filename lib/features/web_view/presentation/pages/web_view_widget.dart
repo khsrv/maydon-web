@@ -193,7 +193,7 @@ class _WebViewPageState extends State<WebViewPage> {
         body: Stack(
           fit: StackFit.expand,
           children: [
-            // WebView с отступом сверху для AppBar
+            // Основной слой с WebView / iframe
             if (kIsWeb)
               // Для веб используем iframe
               _isLoading
@@ -208,7 +208,7 @@ class _WebViewPageState extends State<WebViewPage> {
                       : const Center(
                           child: Text('Ошибка загрузки WebView'),
                         ),
-            // AppBar всегда видимый поверх WebView
+            // Верхний AppBar всегда поверх контента
             Align(
               alignment: Alignment.topCenter,
               child: OverlayAppBar(
@@ -227,6 +227,15 @@ class _WebViewPageState extends State<WebViewPage> {
                 ],
               ),
             ),
+            // Нижний оверлей для скрытия footer сайта (только веб)
+            if (kIsWeb)
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  height: 50,
+                  color: kWebViewBgLight,
+                ),
+              ),
           ],
         ),
       ),

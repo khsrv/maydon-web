@@ -18,11 +18,11 @@ class OverlayAppBar extends StatelessWidget {
     final text = Theme.of(context).textTheme.titleMedium;
 
     return Container(
-      height: 110,
+      height: 50,
       color: kWebViewHeaderBlue,
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Padding(
-        padding: const EdgeInsets.only(top: 30.0),
+        padding: const EdgeInsets.only(top: 8.0),
         child: Row(
           children: [
             leading ?? const SizedBox(width: 16, height: 48),
