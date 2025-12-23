@@ -54,30 +54,19 @@ class _WebViewPageState extends State<WebViewPage> {
   }
   
   void _setupWebView() {
-    // Регистрируем iframe для веб-платформы
     if (kIsWeb) {
       // ignore: undefined_prefixed_name
       ui_web.platformViewRegistry.registerViewFactory(
         _iframeViewId!,
         (int viewId) {
-          // Создаем контейнер для iframe с обрезкой нижней части
-          // ignore: undefined_prefixed_name
-          final container = html.DivElement()
-            ..style.width = '100%'
-            ..style.height = 'calc(100% - 150px)' // Уменьшаем высоту на размер footer
-            ..style.overflow = 'hidden'
-            ..style.position = 'relative';
-          
           // ignore: undefined_prefixed_name
           final iframe = html.IFrameElement()
             ..src = _currentUri.toString()
             ..style.border = 'none'
             ..style.width = '100%'
             ..style.height = '100%';
-          
-          container.append(iframe);
-          
-          return container;
+
+          return iframe;
         },
       );
       setState(() => _isLoading = false);
@@ -193,14 +182,12 @@ class _WebViewPageState extends State<WebViewPage> {
         body: Stack(
           fit: StackFit.expand,
           children: [
-            // Основной слой с WebView / iframe (внизу стека)
+            // Основной слой с WebView / iframe
             if (kIsWeb)
               // Для веб используем iframe
               _isLoading
                   ? const Center(child: CupertinoActivityIndicator(color: kBlue))
-                  : Positioned.fill(
-                      child: HtmlElementView(viewType: _iframeViewId!),
-                    )
+                  : HtmlElementView(viewType: _iframeViewId!)
             else
               // Для мобильных используем WebView
               _isLoading
@@ -211,10 +198,8 @@ class _WebViewPageState extends State<WebViewPage> {
                           child: Text('Ошибка загрузки WebView'),
                         ),
             // Верхний AppBar всегда поверх контента
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
+            Align(
+              alignment: Alignment.topCenter,
               child: OverlayAppBar(
                 title: Text(widget.title ?? 'Maydon'),
                 leading: IconButton(
@@ -224,27 +209,9 @@ class _WebViewPageState extends State<WebViewPage> {
                     context.go('/');
                   },
                 ),
-                actions: [
-                  // NotificationBellButton(
-                  //   onTap: () => context.pushNamed('notifications'),
-                  // ),
-                ],
+                actions: const [],
               ),
             ),
-            // Нижний оверлей для скрытия footer сайта (только веб) - поверх всего
-            if (kIsWeb)
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: IgnorePointer(
-                  ignoring: false,
-                  child: Container(
-                    height: 50,
-                    color: kWebViewBgLight,
-                  ),
-                ),
-              ),
           ],
         ),
       ),
