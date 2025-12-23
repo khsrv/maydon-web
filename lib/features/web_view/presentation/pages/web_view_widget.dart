@@ -147,7 +147,6 @@ class _WebViewPageState extends State<WebViewPage> {
 
       // Загружаем URL сразу после инициализации
       _controller!.loadRequest(_currentUri);
-    }
   }
 
   Uri _wrap(String raw) {
